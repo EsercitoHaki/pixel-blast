@@ -1,6 +1,10 @@
 #include "game.h"
 
-Game::Game() : m_isRunning(false), m_window(nullptr), m_renderer(nullptr), m_lastTick(0), m_deltaTime(0.0) {
+Game::Game() : m_isRunning(false), 
+            m_window(nullptr), 
+            m_renderer(nullptr), 
+            m_lastTick(0), 
+            m_deltaTime(0.0) {
 
 }
 
@@ -41,6 +45,14 @@ bool Game::init(const char* title, int width, int height) {
     m_isRunning = true;
     m_lastTick = SDL_GetPerformanceCounter();
     return true;
+}
+
+void Game::handleEvents() {
+    m_input.update();
+
+    if(m_input.isKeyDown(SDLK_ESCAPE)) {
+        m_isRunning = false;
+    }
 }
 
 void Game::update() {

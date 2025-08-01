@@ -9,7 +9,8 @@ int main(int argc, char* argv[]) {
     Game game;
 
     if (game.init("Pixel Blast", SCREEN_WIDTH, SCREEN_HEIGHT)) {
-        while (game.m_isRunning) {
+        while (game.isRunning()) {
+            game.handleEvents();
             game.update();
             game.render();
         }
