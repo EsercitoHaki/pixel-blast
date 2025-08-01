@@ -42,6 +42,8 @@ bool Game::init(const char* title, int width, int height) {
         return false;
     }
 
+    m_player = new Player(m_renderer, 200, 200, 10.0);
+
     m_isRunning = true;
     m_lastTick = SDL_GetPerformanceCounter();
     return true;
@@ -59,11 +61,18 @@ void Game::update() {
     Uint64 currentTime = SDL_GetPerformanceCounter();
     m_deltaTime = (double)(currentTime - m_lastTick) * 1000 / (double)SDL_GetPerformanceFrequency() / 1000.0;
     m_lastTick = currentTime;
+
+    if (m_player) {
+        m_player->update();
+    }
 }
 
 void Game::render() {
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
-
+    if (m_player){
+        m_player->render();
+    }
     SDL_RenderPresent(m_renderer);
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "input.h"
+#include "player.h"
 #include <SDL3/SDL.h>
 
 class Game {
@@ -24,4 +25,6 @@ private:
     
     Uint64 m_lastTick;
     double m_deltaTime;
+
+    Player* m_player;
 };
