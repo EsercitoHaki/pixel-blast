@@ -1,8 +1,11 @@
 #include "game.h"
+#include "texture.h"
+#include "SDL3_image/SDL_image.h"
+
+SDL_Renderer* Game::m_renderer = nullptr;
 
 Game::Game() : m_isRunning(false), 
             m_window(nullptr), 
-            m_renderer(nullptr), 
             m_lastTick(0), 
             m_deltaTime(0.0) {
 
@@ -42,7 +45,11 @@ bool Game::init(const char* title, int width, int height) {
         return false;
     }
 
-    m_player = new Player(m_renderer, 200, 200, 10.0);
+    m_player = new Player(m_renderer, 400, 300, 50.0);
+
+    m_player->setInputHandler(&m_input);
+
+    m_map = new Map();
 
     m_isRunning = true;
     m_lastTick = SDL_GetPerformanceCounter();
@@ -58,21 +65,22 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-    Uint64 currentTime = SDL_GetPerformanceCounter();
-    m_deltaTime = (double)(currentTime - m_lastTick) * 1000 / (double)SDL_GetPerformanceFrequency() / 1000.0;
-    m_lastTick = currentTime;
+    Uint64 currentTick = SDL_GetPerformanceCounter();
+    m_deltaTime = (double)((currentTick - m_lastTick) * 1000 / (double)SDL_GetPerformanceFrequency()) / 1000.0;
+    m_lastTick = currentTick;
 
     if (m_player) {
-        m_player->update();
+        m_player->update(m_deltaTime);
     }
 }
 
 void Game::render() {
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
-    if (m_player){
-        m_player->render();
-    }
+
+    m_map->drawMap();
+    m_player->render();
+
     SDL_RenderPresent(m_renderer);
 }
 
