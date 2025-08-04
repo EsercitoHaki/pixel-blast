@@ -14,6 +14,7 @@ add_subdirectory(libs/SDL_image)
 
 include_directories(
     src
+    src/ecs
 )
 
 add_executable(${PROJECT_NAME} ${GAME_SOURCES})

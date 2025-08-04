@@ -8,7 +8,7 @@ constexpr int SCREEN_HEIGHT = 600;
 int main(int argc, char* argv[]) {
     Game game;
 
-    if (game.init("Pixel Blast", SCREEN_WIDTH, SCREEN_HEIGHT)) {
+    if (game.init("Pixel Blast", SCREEN_WIDTH, SCREEN_HEIGHT, false)) {
         while (game.isRunning()) {
             game.handleEvents();
             game.update();

@@ -1,10 +1,12 @@
 #include "game.h"
 #include "texture.h"
+#include "ecs/transform_component.h"
+#include "ecs/sprite_component.h"
 #include "SDL3_image/SDL_image.h"
 
 SDL_Renderer* Game::m_renderer = nullptr;
 
-Game::Game() : m_isRunning(false), 
+Game::Game() : m_isRunning(false),
             m_window(nullptr), 
             m_lastTick(0), 
             m_deltaTime(0.0) {
@@ -15,7 +17,13 @@ Game::~Game() {
     clean();
 }
 
-bool Game::init(const char* title, int width, int height) {
+bool Game::init(const char* title, int width, int height, bool fullscreen) {
+    int flags = 0;
+
+    if (fullscreen) {
+        flags = SDL_WINDOW_FULLSCREEN;
+    }
+
     if (SDL_Init(SDL_INIT_VIDEO) == false) {
         SDL_Log("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
         return false;
@@ -25,7 +33,7 @@ bool Game::init(const char* title, int width, int height) {
         title,
         width,
         height,
-        0
+        flags
     );
 
     if (m_window == nullptr) {
@@ -45,9 +53,17 @@ bool Game::init(const char* title, int width, int height) {
         return false;
     }
 
-    m_player = new Player(m_renderer, 400, 300, 50.0);
+    auto& newPlayer(manager.addEntity());
 
-    m_player->setInputHandler(&m_input);
+    newPlayer.addComponent<TransformComponent>(400.0f, 300.0f, 3.0f, 3.0f, 0.0f);
+
+    SDL_Texture* playerTexture = Texture::loadTexture("../assets/player.png");
+    newPlayer.addComponent<SpriteComponent>(playerTexture, 1);
+
+    auto& sprite = newPlayer.getComponent<SpriteComponent>();
+    sprite.setSize(64, 44);
+
+    
 
     m_map = new Map();
 
@@ -69,9 +85,7 @@ void Game::update() {
     m_deltaTime = (double)((currentTick - m_lastTick) * 1000 / (double)SDL_GetPerformanceFrequency()) / 1000.0;
     m_lastTick = currentTick;
 
-    if (m_player) {
-        m_player->update(m_deltaTime);
-    }
+    manager.update();
 }
 
 void Game::render() {
@@ -79,7 +93,8 @@ void Game::render() {
     SDL_RenderClear(m_renderer);
 
     m_map->drawMap();
-    m_player->render();
+
+    manager.draw();
 
     SDL_RenderPresent(m_renderer);
 }

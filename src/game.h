@@ -3,6 +3,7 @@
 #include "input.h"
 #include "player.h"
 #include "map.h"
+#include "ecs/ecs.h"
 #include <SDL3/SDL.h>
 
 class Game {
@@ -10,7 +11,7 @@ public:
     Game();
     ~Game();
 
-    bool init(const char* title, int width, int height);
+    bool init(const char* title, int width, int height, bool fullscreen);
     void handleEvents();
     void update();
     void render();
@@ -30,4 +31,5 @@ private:
 
     Player* m_player;
     Map* m_map;
+    Manager manager;
 };
